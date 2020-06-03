@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import org.oleg.sb.test.Impl.LogFileLineProcessorImpl;
 import org.oleg.sb.test.Impl.LogFileParserImpl;
 import org.oleg.sb.test.Impl.SourceLogProviderImpl;
+import org.oleg.sb.test.Impl.StatisticProcessorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +25,13 @@ public class Main {
       int filesNumber = files.size();
       logger.info("There are {} log files", filesNumber);
 
+
       ExecutorService executorService = Executors.newFixedThreadPool(filesNumber);
       files.forEach( file->
         executorService.submit(new LogFileParserImpl(
                                         file,
-                                        new LogFileLineProcessorImpl(LogLevel.ERROR)
+                                        new LogFileLineProcessorImpl(LogLevel.ERROR),
+                                        new StatisticProcessorImpl()
                                         )
                                ));
     }

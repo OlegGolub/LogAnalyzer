@@ -1,5 +1,7 @@
 package org.oleg.sb.test;
 
+import java.time.LocalDateTime;
+
 public interface LogFileLineProcessor {
-  boolean parseLine(String line);
+  LocalDateTime parseLineForError(String line);
 }
