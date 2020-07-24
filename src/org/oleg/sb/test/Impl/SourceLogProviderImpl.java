@@ -28,7 +28,11 @@ public class SourceLogProviderImpl implements SourceLogProvider {
       System.out.print("Введите root directory path:");
       root = scan.nextLine();
       logger.debug("Entering the root {}", root);
-      Path path = Paths.get(root);
+      Path path;
+      if("def".compareToIgnoreCase(root)==0){
+        root= "d:\\Work\\CodeTest\\SmartB_Test\\src\\resources\\";
+      }
+      path = Paths.get(root);
       if( !Files.exists(path)){
         System.out.print(String.format("The directory with name '\'%s\' does not exist", path));
         continue;

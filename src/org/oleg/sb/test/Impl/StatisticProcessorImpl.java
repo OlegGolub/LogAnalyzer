@@ -1,7 +1,10 @@
 package org.oleg.sb.test.Impl;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Stream;
+
 import org.oleg.sb.test.StatisticCountProcessor;
 import org.oleg.sb.test.StatisticInterval;
 import org.oleg.sb.test.StatisticResultProcessor;
@@ -28,18 +31,50 @@ public class StatisticProcessorImpl implements StatisticCountProcessor, Statisti
       atomicCounterArray[i] = new LongAdder();
     }
     long timeStampEnd = System.currentTimeMillis();
-    logger.info("Array with size {} initialized, time spent {}", atomicCounterArray.length,
+    logger.info("Array with size {} initialized, time spent {} ms", atomicCounterArray.length,
         (timeStampEnd - timeStampStart));
   }
 
   @Override
   public void countErrorStatistic(LocalDateTime moment) {
-    atomicCounterArray[getIndexForMoment(moment)].increment();
-    logger.info("Incremented index to {}",atomicCounterArray[getIndexForMoment(moment)].intValue());
+    int index = getIndexForMoment(moment);
+    atomicCounterArray[index].increment();
+    logger.info("Incremented index for moment(offset) {}/{} to {}",moment, index, atomicCounterArray[getIndexForMoment(moment)].intValue());
+  }
+
+  public LongAdder[] getResultArray(){
+    finalize();
+    return atomicCounterArray;
+
+  }
+
+  public void printRezult(){
+    for(int i =0; i<atomicCounterArray.length; i++){
+      int value = atomicCounterArray[i].intValue();
+      if(value!=0){
+        System.out.println(String.format("Moment: %d Errors: %d",i, value ));
+      }
+    }
+  }
+
+  public void finalize(){
+    for(int i =0; i<atomicCounterArray.length; i++){
+      int value = (int) atomicCounterArray[i].sum();
+      if(value>0){
+        System.out.println("error detected for index "+i);
+      }
+    }
   }
 
   private int getIndexForMoment(LocalDateTime startDate){
-    return startDate.getMonthValue() * MONTH_OFFSET + startDate.getHour() * DAY_OFFSET + startDate.getMinute();
+    int index =  startDate.getMonthValue() * MONTH_OFFSET + startDate.getDayOfMonth()*DAY_OFFSET + startDate.getHour() * MINUTES_IN_HOUR + startDate.getMinute();
+    System.out.println(String.format("Index for moment %s(%d/%d/%d%d) is %d", startDate,
+            startDate.getMonthValue(),
+            startDate.getDayOfMonth(),
+            startDate.getHour(),
+            startDate.getMinute(),
+            index));
+    return index;
   }
 
 //  private LongAdder getCounterForMoment(int monthIndex, int hourIndex, int minuteIndex) {

@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
+
 import org.oleg.sb.test.Impl.LogFileLineProcessorImpl;
 import org.oleg.sb.test.Impl.LogFileParserImpl;
 import org.oleg.sb.test.Impl.SourceLogProviderImpl;
@@ -26,13 +29,32 @@ public class Main {
       logger.info("There are {} log files", filesNumber);
 
 
+      StatisticProcessorImpl statisticProcessor = new StatisticProcessorImpl();
       ExecutorService executorService = Executors.newFixedThreadPool(filesNumber);
       files.forEach( file->
         executorService.submit(new LogFileParserImpl(
                                         file,
                                         new LogFileLineProcessorImpl(LogLevel.ERROR),
-                                        new StatisticProcessorImpl()
+                                        statisticProcessor
                                         )
                                ));
-    }
+
+      //wait all threads to stop
+      System.out.println("Working...");
+      executorService.shutdown();
+      try {
+          if(executorService.awaitTermination(4, TimeUnit.SECONDS)){
+              System.out.println("All files have been processed");
+              statisticProcessor.printRezult();
+          }
+          else {
+              System.out.println("Not ready in 4 sec");
+          }
+      } catch (InterruptedException e) {
+          executorService.shutdownNow();
+//          Thread.currentThread().interrupt();
+      }
+
+
+  }
 }
