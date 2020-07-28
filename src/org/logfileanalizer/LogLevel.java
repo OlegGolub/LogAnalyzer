@@ -1,4 +1,4 @@
-package org.oleg.sb.test;
+package org.logfileanalizer;
 
 public enum LogLevel {
   ERROR, WARNING, INFO

@@ -1,16 +1,14 @@
-package org.oleg.sb.test;
+package org.logfileanalizer;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.LongAdder;
 
-import org.oleg.sb.test.Impl.LogFileLineProcessorImpl;
-import org.oleg.sb.test.Impl.LogFileParserImpl;
-import org.oleg.sb.test.Impl.SourceLogProviderImpl;
-import org.oleg.sb.test.Impl.StatisticProcessorImpl;
+import org.logfileanalizer.impl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,23 +19,19 @@ public class Main {
       final Logger logger = LoggerFactory.getLogger(Main.class);
       logger.info("Start working");
 
-      logger.debug("SourceLogProviderImpl  is used for getting log files");
       SourceLogProvider sourceLogProvider = new SourceLogProviderImpl();
+      logger.debug("For getting log files is used "+ sourceLogProvider.getClass().getSimpleName());
 
       List<File> files = sourceLogProvider.getLogFiles();
       int filesNumber = files.size();
-      logger.info("There are {} log files", filesNumber);
 
-
-      StatisticProcessorImpl statisticProcessor = new StatisticProcessorImpl();
+      //StatisticCountProcessor statisticProcessor = new StatisticProcessorConcurrentSkipListMap();
+      StatisticCountProcessor statisticProcessor = new StatisticProcessorHugeMemoryArray();
       ExecutorService executorService = Executors.newFixedThreadPool(filesNumber);
       files.forEach( file->
-        executorService.submit(new LogFileParserImpl(
-                                        file,
-                                        new LogFileLineProcessorImpl(LogLevel.ERROR),
-                                        statisticProcessor
-                                        )
-                               ));
+        executorService.submit(new LogFileParserImpl(file,
+                                                    new LogFileLineProcessorImpl(LogLevel.ERROR),
+                                                    statisticProcessor)));
 
       //wait all threads to stop
       System.out.println("Working...");
@@ -45,7 +39,9 @@ public class Main {
       try {
           if(executorService.awaitTermination(4, TimeUnit.SECONDS)){
               System.out.println("All files have been processed");
-              statisticProcessor.printRezult();
+              //statisticProcessor.printResult();
+              String datePart= new SimpleDateFormat("yyyyMMddHHmm'.txt'").format(new Date());
+              statisticProcessor.printToFile("reportFile_"+datePart);
           }
           else {
               System.out.println("Not ready in 4 sec");
@@ -54,7 +50,5 @@ public class Main {
           executorService.shutdownNow();
 //          Thread.currentThread().interrupt();
       }
-
-
   }
 }

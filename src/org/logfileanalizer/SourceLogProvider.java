@@ -1,4 +1,4 @@
-package org.oleg.sb.test;
+package org.logfileanalizer;
 
 import java.io.File;
 import java.util.List;

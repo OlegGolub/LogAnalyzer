@@ -1,10 +1,10 @@
-package org.oleg.sb.test.Impl;
+package org.logfileanalizer.impl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import org.apache.commons.lang3.StringUtils;
-import org.oleg.sb.test.LogFileLineProcessor;
-import org.oleg.sb.test.LogLevel;
+import org.logfileanalizer.LogFileLineProcessor;
+import org.logfileanalizer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,20 +19,19 @@ public class LogFileLineProcessorImpl implements LogFileLineProcessor {
 
   @Override
   public LocalDateTime parseLineForError(String line) {
-    logger.info("Start Parsing line: {} for {}", line, loglevel);
-    if (line!=null || !line.isEmpty() && StringUtils.containsIgnoreCase(line, loglevel.toString())) {
+    if (line!=null && !line.isEmpty() && StringUtils.containsIgnoreCase(line, loglevel.toString())) {
       String[] parts = line.split(";", 3);
       try {
         LocalDateTime localDateTime = LocalDateTime.parse(parts[0]);
-        logger.info("Date: {}", localDateTime);
+        //logger.debug("Line: {} analyzed. {} - Detected at {}", line, loglevel, localDateTime);
         return localDateTime;
       } catch (DateTimeParseException e) {
-        logger
-            .error("Skip[ string: {} cannot convert {} to date: ", line, parts[0], e.getMessage());
+        logger.error("Skip[ string: {}-cannot convert {} to date: ", line, parts[0], e.getMessage());
         return null;
       }
     }
     else {
+      //logger.debug("Line: {} analyzed. {} - Not detected", line, loglevel);
       return null;
     }
   }

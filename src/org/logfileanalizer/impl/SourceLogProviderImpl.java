@@ -1,4 +1,4 @@
-package org.oleg.sb.test.Impl;
+package org.logfileanalizer.impl;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-import org.oleg.sb.test.SourceLogProvider;
+import org.logfileanalizer.SourceLogProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +25,11 @@ public class SourceLogProviderImpl implements SourceLogProvider {
     Scanner scan = new Scanner(System.in);
     String root;
     do{
-      System.out.print("Введите root directory path:");
+      System.out.print("Введите root directory path or press <Enter> for default dir<resources>:");
       root = scan.nextLine();
       logger.debug("Entering the root {}", root);
       Path path;
-      if("def".compareToIgnoreCase(root)==0){
+      if("".compareToIgnoreCase(root)==0){
         root= "d:\\Work\\CodeTest\\SmartB_Test\\src\\resources\\";
       }
       path = Paths.get(root);
@@ -43,8 +43,6 @@ public class SourceLogProviderImpl implements SourceLogProvider {
         continue;
       }
 
-      logger.debug("Accepted path {}", path);
-
       File dir  = new File(root);
       List<File> files = Arrays.asList(dir.listFiles());
       logger.info("Accepted the path: {}, and there are {} files in it", path, files.size());
@@ -52,9 +50,6 @@ public class SourceLogProviderImpl implements SourceLogProvider {
           System.out.println("There are to many files in the directory: " + files.size());
           throw new RuntimeException("There are to many files in the directory");
       }
-
-      System.out.println(String.format("There are %d files in the dir %s", files.size(), dir));
-
       return files;
     } while(!root.equals(""));
     return Collections.emptyList();
