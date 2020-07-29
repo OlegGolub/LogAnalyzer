@@ -23,8 +23,9 @@ public class LogFileLineProcessorImpl implements LogFileLineProcessor {
       String[] parts = line.split(";", 3);
       try {
         LocalDateTime localDateTime = LocalDateTime.parse(parts[0]);
+        return localDateTime.withSecond(0).withNano(0);
         //logger.debug("Line: {} analyzed. {} - Detected at {}", line, loglevel, localDateTime);
-        return localDateTime;
+
       } catch (DateTimeParseException e) {
         logger.error("Skip[ string: {}-cannot convert {} to date: ", line, parts[0], e.getMessage());
         return null;

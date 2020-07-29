@@ -35,6 +35,9 @@ public class SourceLogProviderImpl implements SourceLogProvider {
       if("l".compareToIgnoreCase(root)==0){
         root= "d:\\Work\\CodeTest\\SmartB_Test\\src\\resources\\long";
       }
+      if("s".compareToIgnoreCase(root)==0){
+        root= "d:\\Work\\CodeTest\\SmartB_Test\\src\\resources\\short";
+      }
 
       path = Paths.get(root);
       if( !Files.exists(path)){

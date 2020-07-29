@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
@@ -69,7 +68,8 @@ public class LogFileGenerator {
     private String generateLogString(){
 
         boolean isWarning = random.nextBoolean() ? true :
-                (random.nextBoolean() ? true : (random.nextBoolean() ? true : false));
+                (random.nextBoolean() ? true : (random.nextBoolean() ? true :
+                (random.nextBoolean() ? true : false)));
 
          StringBuilder sb = new StringBuilder(getNextDateString(changeDay));
          sb.append(";").
@@ -92,4 +92,16 @@ public class LogFileGenerator {
 
         return dateFormatFull.format(currentDateTime);
     }
+
+    public static void main(String[] args) {
+
+        final Logger logger = LoggerFactory.getLogger(Main.class);
+        logger.info("Start working");
+
+        for(int i=1; i<=10;i++){
+            LogFileGenerator generator = new LogFileGenerator(String.valueOf(i), 2020, 7, 27);
+            generator.printToFile();
+        }
+    }
+
 }

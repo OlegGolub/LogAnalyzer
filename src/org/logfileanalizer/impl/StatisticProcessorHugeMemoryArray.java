@@ -25,12 +25,13 @@ public class StatisticProcessorHugeMemoryArray implements StatisticCountProcesso
   static final int MONTH_OFFSET = DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR;
   static final int DAY_OFFSET = HOURS_IN_DAY * MINUTES_IN_HOUR;
 
+  private StatisticInterval  statisticInterval;
   LongAdder[] atomicCounterArray;
 
   private final Logger logger = LoggerFactory.getLogger(StatisticProcessorHugeMemoryArray.class);
 
-  public StatisticProcessorHugeMemoryArray() {
-
+  public StatisticProcessorHugeMemoryArray(StatisticInterval  statisticInterval) {
+    this.statisticInterval = statisticInterval;
     long timeStampStart = System.currentTimeMillis();
     atomicCounterArray = new LongAdder[MONTH_IN_YEAR * MONTH_OFFSET];// 535,680
     for (int i = 0; i < atomicCounterArray.length; i++) {
@@ -58,7 +59,7 @@ public class StatisticProcessorHugeMemoryArray implements StatisticCountProcesso
     for (int i =0; i<atomicCounterArray.length; i++) {
       int value = atomicCounterArray[i].intValue();
       if (value != 0) {
-        statisticList.add(new Statistic(getDateFromIndex(i), value));
+        statisticList.add(new Statistic(getDateFromIndex(i),statisticInterval, value));
       }
     }
     return statisticList;

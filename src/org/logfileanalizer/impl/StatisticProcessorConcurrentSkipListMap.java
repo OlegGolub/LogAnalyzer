@@ -16,24 +16,38 @@ import java.util.stream.Collectors;
 
 public class StatisticProcessorConcurrentSkipListMap  implements StatisticCountProcessor {
 
+    private ConcurrentNavigableMap<LocalDateTime, Integer> map = new ConcurrentSkipListMap();
+    private StatisticInterval  statisticInterval;
+
     final Logger logger = LoggerFactory.getLogger(StatisticProcessorConcurrentSkipListMap.class);
 
-    private ConcurrentNavigableMap<LocalDateTime, Integer> map = new ConcurrentSkipListMap();
-
+    public StatisticProcessorConcurrentSkipListMap(StatisticInterval  statisticInterval){
+        this.statisticInterval = statisticInterval;
+    }
+    
     @Override
+    /**
+     * Count this fact according to statisticInterval
+     * */
     public void countErrorStatistic(LocalDateTime moment) {
-        map.merge(moment, 1, Integer::sum);
+        LocalDateTime localDateTime = moment.withNano(0);
+        if(statisticInterval==StatisticInterval.HOUR) {
+            localDateTime = localDateTime.withMinute(0);
+        }
+        map.merge(localDateTime, 1, Integer::sum);
     }
 
     @Override
     public List<Statistic> getStatistics() {
         return map.keySet().stream().
-                            map(key->new Statistic(key, map.get(key))).
+                            map(key->new Statistic(key, statisticInterval, map.get(key))).
                             collect(Collectors.toList());
     }
 
     @Override
     public void printToFile(String reportFileName) {
+        logger.info("StatisticProcessorConcurrentSkipListMap printing to file: "+reportFileName);
+
         try(FileWriter writer = new FileWriter(reportFileName, false))
         {
             List<Statistic> statisticList = getStatistics();
