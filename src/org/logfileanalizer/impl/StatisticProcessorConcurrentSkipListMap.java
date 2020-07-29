@@ -41,7 +41,6 @@ public class StatisticProcessorConcurrentSkipListMap  implements StatisticCountP
                 String line = String.format("%s %s %d", statistic.getDateAsString(), ERROR_COUNT, statistic.getErrorCount());
                 writer.write(line);
                 writer.append('\n');
-                System.out.println(line);
             }
             writer.flush();
         }

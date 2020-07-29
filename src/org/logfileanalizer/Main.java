@@ -25,8 +25,8 @@ public class Main {
       List<File> files = sourceLogProvider.getLogFiles();
       int filesNumber = files.size();
 
-      //StatisticCountProcessor statisticProcessor = new StatisticProcessorConcurrentSkipListMap();
-      StatisticCountProcessor statisticProcessor = new StatisticProcessorHugeMemoryArray();
+      StatisticCountProcessor statisticProcessor = new StatisticProcessorConcurrentSkipListMap();
+      //StatisticCountProcessor statisticProcessor = new StatisticProcessorHugeMemoryArray();
       ExecutorService executorService = Executors.newFixedThreadPool(filesNumber);
       files.forEach( file->
         executorService.submit(new LogFileParserImpl(file,
