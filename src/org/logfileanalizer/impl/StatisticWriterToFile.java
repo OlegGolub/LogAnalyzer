@@ -1,6 +1,7 @@
 package org.logfileanalizer.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.logfileanalizer.LogLevel;
 import org.logfileanalizer.StatisticProcessor;
 import org.logfileanalizer.StatisticWriter;
 import org.slf4j.Logger;
@@ -10,15 +11,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 public class StatisticWriterToFile implements StatisticWriter {
 
     String rootDirectory;
     String ERROR_COUNT = "Количество ошибок: ";
+    String WARNING_COUNT = "Количество предупреждений: ";
     String DATE_PATTERN = "yyyyMMddHHmm'.txt'";
     String FILE_NAME_PATTERN = "reportFile_";
 
@@ -42,12 +42,12 @@ public class StatisticWriterToFile implements StatisticWriter {
     }
 
     @Override
-    public long writeStatistic( List<StatisticProcessor.Statistic> statisticList ) {
-        return writeStatistic(statisticList, getFileName());
+    public long writeStatistic( StatisticProcessor statisticProcessor ) {
+        return writeStatistic(statisticProcessor, getFileName());
     }
 
     @Override
-    public long writeStatistic( List<StatisticProcessor.Statistic> statisticList, String fileName) {
+    public long writeStatistic( StatisticProcessor statisticProcessor, String fileName) {
 
        if (StringUtils.isEmpty(fileName)){
            fileName = getFileName();
@@ -58,8 +58,10 @@ public class StatisticWriterToFile implements StatisticWriter {
        logger.info("StatisticWriterToFile printing to file: " + absoluteFilePath);
 
        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(absoluteFilePath))){
-           for (StatisticProcessor.Statistic statistic : statisticList) {
-                String line = String.format("%s %s %d", statistic.getDateAsString(), ERROR_COUNT, statistic.getErrorCount());
+           for (StatisticProcessor.Statistic statistic : statisticProcessor.getStatistics()) {
+                String line = String.format("%s %s %d", statistic.getDateAsString(),
+                        statisticProcessor.getLogLevel()== LogLevel.ERROR ? ERROR_COUNT : WARNING_COUNT,
+                        statistic.getFactCount());
                 bufferedWriter.write(line);
                 bufferedWriter.append('\n');
            }

@@ -1,14 +1,9 @@
 package org.logfileanalizer.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.logfileanalizer.LogLevel;
 import org.logfileanalizer.StatisticInterval;
 import org.logfileanalizer.StatisticProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ConcurrentNavigableMap;
@@ -20,18 +15,18 @@ public class StatisticProcessorConcurrentSkipListMap  implements StatisticProces
 
     private ConcurrentNavigableMap<LocalDateTime, Integer> map = new ConcurrentSkipListMap();
     private StatisticInterval  statisticInterval;
+    private LogLevel logLevel;
 
-    final Logger logger = LoggerFactory.getLogger(StatisticProcessorConcurrentSkipListMap.class);
-
-    public StatisticProcessorConcurrentSkipListMap(StatisticInterval  statisticInterval){
+    public StatisticProcessorConcurrentSkipListMap(StatisticInterval  statisticInterval, LogLevel logLevel){
         this.statisticInterval = statisticInterval;
+        this.logLevel =logLevel;
     }
     
     @Override
     /**
      * Count this fact according to statisticInterval
      * */
-    public void registerTheError(LocalDateTime moment) {
+    public void registerTheFact(LocalDateTime moment) {
         LocalDateTime localDateTime = moment.withNano(0);
         if(statisticInterval==StatisticInterval.HOUR) {
             localDateTime = localDateTime.withMinute(0);
@@ -46,6 +41,10 @@ public class StatisticProcessorConcurrentSkipListMap  implements StatisticProces
                             collect(Collectors.toList());
     }
 
+    @Override
+    public LogLevel getLogLevel() {
+        return logLevel;
+    }
 
 
     @Override

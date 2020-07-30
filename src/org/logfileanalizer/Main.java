@@ -25,11 +25,13 @@ public class Main {
       List<File> files = sourceLogProvider.getLogFiles();
       int filesNumber = files.size();
 
-      StatisticProcessor statisticProcessor = new StatisticProcessorConcurrentSkipListMap(StatisticInterval.MINUTE);
+      StatisticProcessor statisticProcessor = new StatisticProcessorConcurrentSkipListMap(
+              StatisticInterval.MINUTE, LogLevel.WARN);
+
       ExecutorService executorService = Executors.newFixedThreadPool(filesNumber);
       files.forEach( file->
         executorService.submit(new LogFileParserImpl(file,
-                                                    new LogFileLineProcessorImpl(LogLevel.ERROR),
+                                                    new LogFileLineProcessorImpl(LogLevel.WARN),
                                                     statisticProcessor)));
 
       //wait all threads to stop
@@ -40,7 +42,7 @@ public class Main {
               System.out.println("All files have been processed");
 
               StatisticWriter statisticWriter  = new StatisticWriterToFile();
-              statisticWriter.writeStatistic(statisticProcessor.getStatistics());
+              statisticWriter.writeStatistic(statisticProcessor);
           }
           else {
               System.out.println("Not ready in 4 sec");

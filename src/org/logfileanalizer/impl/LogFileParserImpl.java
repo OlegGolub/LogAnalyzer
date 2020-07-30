@@ -50,12 +50,12 @@ public class LogFileParserImpl implements Runnable {
             //logger.debug("File: {}, line : {}", file.getName(), line);
             LocalDateTime momentWithError = logFileLineProcessor.parseLineForError(line);
             if(momentWithError!=null){
-              statisticProcessor.registerTheError(momentWithError);
+              statisticProcessor.registerTheFact(momentWithError);
               countError++;
             }
       }
 
-      logger.info("File \'{}\' processed in {}ms by thread \'{}\': there are {} errors",
+      logger.info("File \'{}\' processed in {}ms by thread \'{}\': there are {} records",
               file.getName(),
               (System.currentTimeMillis()-startTime),
               Thread.currentThread().getName(),

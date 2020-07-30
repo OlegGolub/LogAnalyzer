@@ -12,12 +12,13 @@ public interface StatisticProcessor {
     private StatisticInterval statisticInterval;
     private int errorCount;
 
+
     public Statistic(LocalDateTime startDateTime,  StatisticInterval statisticInterval, int count){
       this.dateTime = startDateTime;
       this.errorCount = count;
       this.statisticInterval=statisticInterval;
     }
-    public int getErrorCount() {
+    public int getFactCount() {
       return errorCount;
     }
 
@@ -43,12 +44,13 @@ public interface StatisticProcessor {
   /**
    * Count Error at the moment
    * */
-  void registerTheError(LocalDateTime moment);
+  void registerTheFact(LocalDateTime moment);
 
   /**
    * This method will return Statistic
    * */
   List<Statistic> getStatistics();
+  LogLevel getLogLevel();
 
   int getErrorStatisticForDateAndInterval(LocalDateTime startDate, StatisticInterval  statisticInterval);
 }
