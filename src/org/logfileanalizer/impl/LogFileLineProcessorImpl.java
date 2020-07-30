@@ -4,18 +4,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.logfileanalizer.LogFileLineProcessor;
-import org.logfileanalizer.LogLevel;
+import org.logfileanalizer.StatisticLogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LogFileLineProcessorImpl implements LogFileLineProcessor {
 
-  private LogLevel loglevel;
+  private StatisticLogLevel loglevel;
 
   final Logger logger = LoggerFactory.getLogger(LogFileLineProcessorImpl.class);
 
-  public LogFileLineProcessorImpl(LogLevel logLevel){
-    this.loglevel = logLevel;
+  public LogFileLineProcessorImpl(StatisticLogLevel statisticLogLevel){
+    this.loglevel = statisticLogLevel;
   }
 
   @Override

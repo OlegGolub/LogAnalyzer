@@ -1,8 +1,8 @@
 package org.logfileanalizer.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.logfileanalizer.LogLevel;
-import org.logfileanalizer.StatisticProcessor;
+import org.logfileanalizer.StatisticLogLevel;
+import org.logfileanalizer.StatisticKeeper;
 import org.logfileanalizer.StatisticWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class StatisticWriterToFile implements StatisticWriter {
     String ERROR_COUNT = "Количество ошибок: ";
     String WARNING_COUNT = "Количество предупреждений: ";
     String DATE_PATTERN = "yyyyMMddHHmm'.txt'";
-    String FILE_NAME_PATTERN = "reportFile_";
+    String FILE_NAME_PATTERN = "statistics_";
 
     final Logger logger = LoggerFactory.getLogger(StatisticWriterToFile.class);
 
@@ -42,12 +42,12 @@ public class StatisticWriterToFile implements StatisticWriter {
     }
 
     @Override
-    public long writeStatistic( StatisticProcessor statisticProcessor ) {
-        return writeStatistic(statisticProcessor, getFileName());
+    public long writeStatistic( StatisticKeeper statisticKeeper) {
+        return writeStatistic(statisticKeeper, getFileName());
     }
 
     @Override
-    public long writeStatistic( StatisticProcessor statisticProcessor, String fileName) {
+    public long writeStatistic(StatisticKeeper statisticKeeper, String fileName) {
 
        if (StringUtils.isEmpty(fileName)){
            fileName = getFileName();
@@ -58,10 +58,10 @@ public class StatisticWriterToFile implements StatisticWriter {
        logger.info("StatisticWriterToFile printing to file: " + absoluteFilePath);
 
        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(absoluteFilePath))){
-           for (StatisticProcessor.Statistic statistic : statisticProcessor.getStatistics()) {
+           for (StatisticKeeper.Statistic statistic : statisticKeeper.getStatistics()) {
                 String line = String.format("%s %s %d", statistic.getDateAsString(),
-                        statisticProcessor.getLogLevel()== LogLevel.ERROR ? ERROR_COUNT : WARNING_COUNT,
-                        statistic.getFactCount());
+                        statisticKeeper.getStatisticLogLevel()== StatisticLogLevel.ERROR ? ERROR_COUNT : WARNING_COUNT,
+                        statistic.getFactsCount());
                 bufferedWriter.write(line);
                 bufferedWriter.append('\n');
            }

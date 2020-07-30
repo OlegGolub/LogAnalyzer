@@ -4,22 +4,22 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public interface StatisticProcessor {
+public interface StatisticKeeper {
 
   class Statistic{
 
     private LocalDateTime dateTime;
     private StatisticInterval statisticInterval;
-    private int errorCount;
+    private int factsCount;
 
 
     public Statistic(LocalDateTime startDateTime,  StatisticInterval statisticInterval, int count){
       this.dateTime = startDateTime;
-      this.errorCount = count;
+      this.factsCount = count;
       this.statisticInterval=statisticInterval;
     }
-    public int getFactCount() {
-      return errorCount;
+    public int getFactsCount() {
+      return factsCount;
     }
 
     public LocalDateTime getDateTime() {
@@ -50,7 +50,7 @@ public interface StatisticProcessor {
    * This method will return Statistic
    * */
   List<Statistic> getStatistics();
-  LogLevel getLogLevel();
+  StatisticLogLevel getStatisticLogLevel();
 
   int getErrorStatisticForDateAndInterval(LocalDateTime startDate, StatisticInterval  statisticInterval);
 }

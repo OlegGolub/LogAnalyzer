@@ -7,25 +7,26 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 import org.logfileanalizer.LogFileLineProcessor;
+import org.logfileanalizer.LogFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.logfileanalizer.StatisticProcessor;
+import org.logfileanalizer.StatisticKeeper;
 
-public class LogFileParserImpl implements Runnable {
+public class LogFileParserImpl implements Runnable, LogFileParser {
 
   private File file;
   private LogFileLineProcessor logFileLineProcessor;
-  private StatisticProcessor statisticProcessor;
+  private StatisticKeeper statisticKeeper;
 
   final Logger logger = LoggerFactory.getLogger(LogFileParserImpl.class);
 
   public LogFileParserImpl(File file,
                            LogFileLineProcessor logFileLineProcessor,
-                           StatisticProcessor statisticCountProcessor
+                           StatisticKeeper statisticCountProcessor
   ){
     this.logFileLineProcessor = logFileLineProcessor;
-    this.statisticProcessor = statisticCountProcessor;
+    this.statisticKeeper = statisticCountProcessor;
     this.file=file;
   }
 
@@ -38,6 +39,7 @@ public class LogFileParserImpl implements Runnable {
     }
   }
 
+  @Override
   public void parseLogFile(File file) throws IOException {
 
       long startTime = System.currentTimeMillis();
@@ -50,7 +52,7 @@ public class LogFileParserImpl implements Runnable {
             //logger.debug("File: {}, line : {}", file.getName(), line);
             LocalDateTime momentWithError = logFileLineProcessor.parseLineForError(line);
             if(momentWithError!=null){
-              statisticProcessor.registerTheFact(momentWithError);
+              statisticKeeper.registerTheFact(momentWithError);
               countError++;
             }
       }

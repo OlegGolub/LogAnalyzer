@@ -1,9 +1,8 @@
 package org.logfileanalizer.impl;
 
-import org.apache.commons.lang3.StringUtils;
-import org.logfileanalizer.LogLevel;
+import org.logfileanalizer.StatisticLogLevel;
 import org.logfileanalizer.StatisticInterval;
-import org.logfileanalizer.StatisticProcessor;
+import org.logfileanalizer.StatisticKeeper;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ConcurrentNavigableMap;
@@ -11,15 +10,15 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.stream.Collectors;
 
 
-public class StatisticProcessorConcurrentSkipListMap  implements StatisticProcessor {
+public class StatisticKeeperConcurrentSkipListMap implements StatisticKeeper {
 
     private ConcurrentNavigableMap<LocalDateTime, Integer> map = new ConcurrentSkipListMap();
     private StatisticInterval  statisticInterval;
-    private LogLevel logLevel;
+    private StatisticLogLevel statisticLogLevel;
 
-    public StatisticProcessorConcurrentSkipListMap(StatisticInterval  statisticInterval, LogLevel logLevel){
+    public StatisticKeeperConcurrentSkipListMap(StatisticInterval  statisticInterval, StatisticLogLevel statisticLogLevel){
         this.statisticInterval = statisticInterval;
-        this.logLevel =logLevel;
+        this.statisticLogLevel = statisticLogLevel;
     }
     
     @Override
@@ -42,8 +41,8 @@ public class StatisticProcessorConcurrentSkipListMap  implements StatisticProces
     }
 
     @Override
-    public LogLevel getLogLevel() {
-        return logLevel;
+    public StatisticLogLevel getStatisticLogLevel() {
+        return statisticLogLevel;
     }
 
 

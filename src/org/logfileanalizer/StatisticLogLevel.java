@@ -1,5 +1,5 @@
 package org.logfileanalizer;
 
-public enum LogLevel {
+public enum StatisticLogLevel {
   ERROR, WARN
 }
