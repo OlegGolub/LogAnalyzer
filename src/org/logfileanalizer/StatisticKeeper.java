@@ -8,10 +8,12 @@ public interface StatisticKeeper {
 
   class Statistic{
 
+    private static DateTimeFormatter formatterStart = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm");
+    private static DateTimeFormatter formatterEnd = DateTimeFormatter.ofPattern("-HH:mm");
+
     private LocalDateTime dateTime;
     private StatisticInterval statisticInterval;
     private int factsCount;
-
 
     public Statistic(LocalDateTime startDateTime,  StatisticInterval statisticInterval, int count){
       this.dateTime = startDateTime;
@@ -28,14 +30,12 @@ public interface StatisticKeeper {
 
     public String getDateAsString(){
 
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm-");
-      StringBuilder sb = new StringBuilder(formatter.format(dateTime));
+      StringBuilder sb = new StringBuilder(formatterStart.format(dateTime));
 
       if(StatisticInterval.HOUR ==statisticInterval){
-        sb.append(dateTime.plusHours(1).getHour()+".00");
+        sb.append(formatterEnd.format(dateTime.plusHours(1)));
       }else if(StatisticInterval.MINUTE ==statisticInterval){
-        LocalDateTime endDateTime = dateTime.plusMinutes(1);
-        sb.append(endDateTime.getHour()+":"+endDateTime.getMinute());
+        sb.append(sb.append(formatterEnd.format(dateTime.plusMinutes(1))));
       }
       return sb.toString();
     }

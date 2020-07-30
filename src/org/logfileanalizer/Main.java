@@ -27,7 +27,7 @@ public class Main {
       int filesNumber = files.size();
 
       StatisticKeeper statisticKeeper = new StatisticKeeperConcurrentSkipListMap(
-                                            StatisticInterval.MINUTE, statisticLogLevel);
+                                            StatisticInterval.HOUR, statisticLogLevel);
 
       ExecutorService executorService = Executors.newFixedThreadPool(filesNumber);
       files.forEach( file->
@@ -50,7 +50,6 @@ public class Main {
           }
       } catch (InterruptedException e) {
           executorService.shutdownNow();
-//          Thread.currentThread().interrupt();
       }
   }
 }
