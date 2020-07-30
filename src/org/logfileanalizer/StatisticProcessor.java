@@ -4,8 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public interface StatisticCountProcessor {
-  String ERROR_COUNT = "Количество ошибок: ";
+public interface StatisticProcessor {
 
   class Statistic{
 
@@ -40,17 +39,16 @@ public interface StatisticCountProcessor {
       return sb.toString();
     }
   }
+
   /**
    * Count Error at the moment
    * */
-  void countErrorStatistic(LocalDateTime moment);
+  void registerTheError(LocalDateTime moment);
 
   /**
    * This method will return Statistic
    * */
   List<Statistic> getStatistics();
-
-  void printToFile(String fileName);
 
   int getErrorStatisticForDateAndInterval(LocalDateTime startDate, StatisticInterval  statisticInterval);
 }

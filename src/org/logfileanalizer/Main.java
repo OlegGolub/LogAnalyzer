@@ -25,9 +25,7 @@ public class Main {
       List<File> files = sourceLogProvider.getLogFiles();
       int filesNumber = files.size();
 
-      //StatisticCountProcessor statisticProcessor = new StatisticProcessorConcurrentSkipListMap(StatisticInterval.HOUR);
-      StatisticCountProcessor statisticProcessor = new StatisticProcessorConcurrentSkipListMap(StatisticInterval.MINUTE);
-      //StatisticCountProcessor statisticProcessor = new StatisticProcessorHugeMemoryArray();
+      StatisticProcessor statisticProcessor = new StatisticProcessorConcurrentSkipListMap(StatisticInterval.MINUTE);
       ExecutorService executorService = Executors.newFixedThreadPool(filesNumber);
       files.forEach( file->
         executorService.submit(new LogFileParserImpl(file,
@@ -40,9 +38,9 @@ public class Main {
       try {
           if(executorService.awaitTermination(4, TimeUnit.SECONDS)){
               System.out.println("All files have been processed");
-              //statisticProcessor.printResult();
-              String datePart= new SimpleDateFormat("yyyyMMddHHmm'.txt'").format(new Date());
-              statisticProcessor.printToFile("reportFile_"+datePart);
+
+              StatisticWriter statisticWriter  = new StatisticWriterToFile();
+              statisticWriter.writeStatistic(statisticProcessor.getStatistics());
           }
           else {
               System.out.println("Not ready in 4 sec");

@@ -10,19 +10,19 @@ import org.logfileanalizer.LogFileLineProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.logfileanalizer.StatisticCountProcessor;
+import org.logfileanalizer.StatisticProcessor;
 
 public class LogFileParserImpl implements Runnable {
 
   private File file;
   private LogFileLineProcessor logFileLineProcessor;
-  private StatisticCountProcessor statisticProcessor;
+  private StatisticProcessor statisticProcessor;
 
   final Logger logger = LoggerFactory.getLogger(LogFileParserImpl.class);
 
   public LogFileParserImpl(File file,
                            LogFileLineProcessor logFileLineProcessor,
-                           StatisticCountProcessor statisticCountProcessor
+                           StatisticProcessor statisticCountProcessor
   ){
     this.logFileLineProcessor = logFileLineProcessor;
     this.statisticProcessor = statisticCountProcessor;
@@ -50,7 +50,7 @@ public class LogFileParserImpl implements Runnable {
             //logger.debug("File: {}, line : {}", file.getName(), line);
             LocalDateTime momentWithError = logFileLineProcessor.parseLineForError(line);
             if(momentWithError!=null){
-              statisticProcessor.countErrorStatistic(momentWithError);
+              statisticProcessor.registerTheError(momentWithError);
               countError++;
             }
       }

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 public class LogFileLineProcessorImpl implements LogFileLineProcessor {
 
   private LogLevel loglevel;
+
   final Logger logger = LoggerFactory.getLogger(LogFileLineProcessorImpl.class);
 
   public LogFileLineProcessorImpl(LogLevel logLevel){
@@ -19,20 +20,17 @@ public class LogFileLineProcessorImpl implements LogFileLineProcessor {
 
   @Override
   public LocalDateTime parseLineForError(String line) {
-    if (line!=null && !line.isEmpty() && StringUtils.containsIgnoreCase(line, loglevel.toString())) {
+    if (!StringUtils.isEmpty(line) && StringUtils.containsIgnoreCase(line, loglevel.toString())) {
       String[] parts = line.split(";", 3);
       try {
-        LocalDateTime localDateTime = LocalDateTime.parse(parts[0]);
-        return localDateTime.withSecond(0).withNano(0);
-        //logger.debug("Line: {} analyzed. {} - Detected at {}", line, loglevel, localDateTime);
-
+        LocalDateTime localDateTime = LocalDateTime.parse(parts[0].trim());
+        return localDateTime.withSecond(0).withNano(0);// not save second and mill sec
       } catch (DateTimeParseException e) {
-        logger.error("Skip[ string: {}-cannot convert {} to date: ", line, parts[0], e.getMessage());
+        logger.error("Skip string: /'{}/'-cannot convert {} to date: ", line, parts[0], e.getMessage());
         return null;
       }
     }
     else {
-      //logger.debug("Line: {} analyzed. {} - Not detected", line, loglevel);
       return null;
     }
   }

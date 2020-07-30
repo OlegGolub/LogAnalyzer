@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+
 import org.logfileanalizer.SourceLogProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +53,15 @@ public class SourceLogProviderImpl implements SourceLogProvider {
       }
 
       File dir  = new File(root);
-      List<File> files = Arrays.asList(dir.listFiles());
-      logger.info("Accepted the path: {}, and there are {} files in it", path, files.size());
-      if (files.size()>MAX_LOG_FILES){
-          System.out.println("There are to many files in the directory: " + files.size());
+      List<File> parts = Arrays.asList(dir.listFiles());
+      final List<File> collectedFiles = parts.stream().filter(f->!f.isDirectory()).collect(Collectors.toList());
+
+      logger.info("Accepted the path: {}, and there are {} files in it", path, collectedFiles.size());
+      if (collectedFiles.size()>MAX_LOG_FILES){
+          System.out.println("There are to many files in the directory: " + collectedFiles.size());
           throw new RuntimeException("There are to many files in the directory");
       }
-      return files;
+      return collectedFiles;
     } while(!root.equals(""));
     return Collections.emptyList();
   }
